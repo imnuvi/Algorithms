@@ -36,7 +36,7 @@ defmodule Solution do
     )
   end
 
-  def run_part_one() do
+  def run(part) do
     {_, res} = File.read('./inputs/day_1.txt')
 
     lines =
@@ -44,20 +44,15 @@ defmodule Solution do
       |> String.split("\n", trim: true)
       |> Enum.to_list()
 
-    Enum.reduce(lines, 0, fn x, acc -> acc + read_nums(x) end)
-  end
+    case part do
+      :one ->
+        Enum.reduce(lines, 0, fn x, acc -> acc + read_nums(x) end)
 
-  def run_part_two() do
-    {_, res} = File.read('./inputs/day_1.txt')
-
-    lines =
-      res
-      |> String.split("\n", trim: true)
-      |> Enum.to_list()
-
-    Enum.reduce(lines, 0, fn x, acc -> acc + read_nums_chars(x) end)
+      :two ->
+        Enum.reduce(lines, 0, fn x, acc -> acc + read_nums_chars(x) end)
+    end
   end
 end
 
-IO.puts(Solution.run_part_one())
-IO.puts(Solution.run_part_two())
+IO.puts(Solution.run(:one))
+IO.puts(Solution.run(:two))
