@@ -25,6 +25,10 @@ defmodule Solution do
     %{"red" => 12, "green" => 13, "blue" => 14, "sum" => 12 + 13 + 14}
   end
 
+  def get_empty() do
+    %{"red" => 0, "green" => 0, "blue" => 0}
+  end
+
   def compare({cur_colour, cur_value}) do
     test_map = get_testcase()
 
@@ -57,7 +61,34 @@ defmodule Solution do
     end
   end
 
-  def run() do
+  def map_max({cur_colour, cur_value}, acc) do
+    old_val = Map.get(acc, cur_colour)
+
+    cond do
+      cur_value > old_val ->
+        Map.put(acc, cur_colour, cur_value)
+
+      true ->
+        acc
+    end
+  end
+
+  def calc_power(curr, acc) do
+    show_map = convert_map(curr)
+    Enum.reduce(show_map, acc, &map_max/2)
+  end
+
+  def multiply_stuff(my_map) do
+    Enum.reduce(my_map, 1, fn {_, val}, acc -> val * acc end)
+  end
+
+  def check_valid_p2(line) do
+    [_, act_line] = String.split(line, ":")
+    sep_test_cases = String.split(act_line, ";")
+    multiply_stuff(Enum.reduce(sep_test_cases, get_empty(), &calc_power/2))
+  end
+
+  def run(part) do
     {_, res} = File.read('./inputs/day_2.txt')
 
     lines =
@@ -65,8 +96,15 @@ defmodule Solution do
       |> String.split("\n", trim: true)
       |> Enum.to_list()
 
-    Enum.reduce(lines, 0, fn x, acc -> check_valid(x) + acc end)
+    case part do
+      :one ->
+        Enum.reduce(lines, 0, fn x, acc -> check_valid(x) + acc end)
+
+      :two ->
+        Enum.reduce(lines, 0, fn x, acc -> check_valid_p2(x) + acc end)
+    end
   end
 end
 
-IO.puts(Solution.run())
+IO.puts(Solution.run(:one))
+IO.puts(Solution.run(:two))
