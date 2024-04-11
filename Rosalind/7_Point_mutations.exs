@@ -1,16 +1,14 @@
 # https://rosalind.info/problems/hamm/
 
 defmodule Solution do
-
-
   def collate_differences(index, %{"stranda" => stranda, "strandb" => strandb, "res" => res}) do
     cond do
       String.at(stranda, index) == String.at(strandb, index) ->
         %{"stranda" => stranda, "strandb" => strandb, "res" => res}
+
       true ->
         %{"stranda" => stranda, "strandb" => strandb, "res" => res + 1}
     end
-
   end
 
   def hamming_distance(stranda, strandb) do
@@ -24,9 +22,7 @@ defmodule Solution do
     ham_dict = hamming_distance(stranda, strandb)
     ham_dict["res"]
   end
-
 end
-
 
 {_, file} = File.read("./inputs/7_point_mutations.txt")
 IO.inspect(Solution.run(file))

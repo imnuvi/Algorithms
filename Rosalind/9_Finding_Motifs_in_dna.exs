@@ -1,4 +1,4 @@
-# https://rosalind.info/problems/hamm/
+# https://rosalind.info/problems/subs/
 
 defmodule Solution do
   def count_indexes(x, acc) do
