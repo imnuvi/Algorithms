@@ -38,43 +38,63 @@ defmodule Converter do
     protein_code = Map.get(codon_table, codon)
 
     cond do
+      String.length(codon) < 3 ->
+        {:err, []}
+
       protein_code == nil ->
-        {:err, ""}
+        {:err, []}
 
       protein_code == "Stop" ->
         cond do
           String.contains?(protein_strand, "M") ->
-            {:ok, protein_strand}
+            # full_protein = protein_strand <> protein_code
+
+            {_, res_strand} =
+              chop_strands(String.slice(rna_strand, 3..-1//1), codon_table, "")
+
+            {:ok, [protein_strand] ++ res_strand}
 
           true ->
-            {:err, ""}
+            # full_protein = protein_strand <> protein_code
+
+            {_, res_strand} =
+              chop_strands(String.slice(rna_strand, 3..-1//1), codon_table, "")
+
+            {:err, res_strand}
         end
 
-      String.length(codon) < 3 ->
-        {:err, ""}
-
-      true ->
+      # true ->
+      #   cond do
+      protein_code == "M" ->
         cond do
-          protein_code == "M" ->
-            cond do
-              String.contains?(protein_strand, "M") ->
-                full_protein = protein_strand <> protein_code
-
-                {stat, strand} =
-                  chop_strands(String.slice(rna_strand, 3..-1//1), codon_table, full_protein)
-
-              true ->
-                {stat, strand} =
-                  chop_strands(String.slice(rna_strand, 3..-1//1), codon_table, "M")
-            end
-
-          true ->
+          String.contains?(protein_strand, "M") ->
             full_protein = protein_strand <> protein_code
 
-            {stat, strand} =
+            {_, strand} =
               chop_strands(String.slice(rna_strand, 3..-1//1), codon_table, full_protein)
+
+            {stat, cur_strand} =
+              chop_strands(String.slice(rna_strand, 3..-1//1), codon_table, "M")
+
+            {stat, strand ++ cur_strand}
+
+          true ->
+            {stat, strand} =
+              chop_strands(String.slice(rna_strand, 3..-1//1), codon_table, "M")
+
+            {stat, strand}
         end
+
+      true ->
+        full_protein = protein_strand <> protein_code
+
+        {stat, strand} =
+          chop_strands(String.slice(rna_strand, 3..-1//1), codon_table, full_protein)
+
+        {stat, strand}
     end
+
+    # end
   end
 
   def get_regex_pos(strand, pattern) do
@@ -118,22 +138,34 @@ defmodule Solution do
   end
 
   def construct_frames(strand) do
-    IO.inspect(Converter.run(strand))
-    IO.inspect(Converter.run(String.slice(strand, 1..String.length(strand))))
-    IO.inspect(Converter.run(String.slice(strand, 2..String.length(strand))))
+    {_, l3} = Converter.run(strand)
+    {_, l2} = Converter.run(String.slice(strand, 1..String.length(strand)))
+    {_, l1} = Converter.run(String.slice(strand, 2..String.length(strand)))
+    l1 ++ l2 ++ l3
   end
 
   def read_open_frame({_, strand}) do
-    construct_frames(strand)
+    l1 = construct_frames(strand)
     inverse_strand = Inverter.run(strand)
-    construct_frames(inverse_strand)
+    l2 = construct_frames(inverse_strand)
+    l1 ++ l2
   end
 
   def run(input) do
-    lss = parse_fasta_file(input)
-    read_open_frame(Enum.at(lss, 0))
+    lss =
+      parse_fasta_file(input)
+
+    Enum.map(lss, fn x -> Enum.join(read_open_frame(x) |> Enum.uniq(), "\n") end)
+
+    # Enum.join(read_open_frame(Enum.at(lss, 0)), "\n")
   end
 end
 
 {_, file} = File.read("./inputs/11_Open_Reading_Frames.txt")
-Solution.run(file)
+
+IO.inspect(Solution.run(file))
+
+Enum.each(Solution.run(file), fn x ->
+  IO.puts(x)
+  IO.puts("-------------")
+end)
