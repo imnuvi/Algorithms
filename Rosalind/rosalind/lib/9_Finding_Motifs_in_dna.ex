@@ -1,6 +1,6 @@
 # https://rosalind.info/problems/subs/
 
-defmodule Solution do
+defmodule DNAMotifs do
   def count_indexes(x, acc) do
     [ls, _] = x
     acc ++ [elem(ls, 0) + 1]
@@ -18,6 +18,6 @@ defmodule Solution do
   end
 end
 
-{_, file} = File.read("./inputs/9_Finding_Motifs_in_dna.txt")
-IO.puts(Solution.run(file))
-# Solution.run(file)
+{_, file} = File.read("./lib/inputs/9_Finding_Motifs_in_dna.txt")
+IO.puts(DNAMotifs.run(file))
+# DNAMotifs.run(file)

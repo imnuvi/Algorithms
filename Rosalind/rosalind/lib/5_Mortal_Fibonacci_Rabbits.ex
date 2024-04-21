@@ -1,6 +1,6 @@
 # https://rosalind.info/problems/fib/
 
-defmodule Solution do
+defmodule MortalFibonacciRabbits do
   def extend_list(init, mult, babies) do
     cond do
       Enum.count(babies) >= mult ->
@@ -35,11 +35,11 @@ defmodule Solution do
     [n, k] = Enum.map(String.split(input, " ", trim: true), fn x -> String.to_integer(x) end)
     adults = [0, 1]
     babies = [1, 0]
-    {r_list, b_list} = call_recurse(adults, k, babies, n-1)
+    {r_list, b_list} = call_recurse(adults, k, babies, n - 1)
 
     Enum.at(r_list, Enum.count(r_list) - 1) + Enum.at(b_list, Enum.count(b_list) - 1)
   end
 end
 
-{_, file} = File.read("./inputs/5_Mortal_Rabbits.txt")
-IO.inspect(Solution.run(file))
+{_, file} = File.read("./lib/inputs/5_Mortal_Rabbits.txt")
+IO.inspect(MortalFibonacciRabbits.run(file))

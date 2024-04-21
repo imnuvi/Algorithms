@@ -1,6 +1,6 @@
 # https://rosalind.info/problems/mrna/
 
-defmodule Inverter do
+defmodule NewInverter do
   def get_base_pairs() do
     %{"A" => "T", "T" => "A", "G" => "C", "C" => "G"}
   end
@@ -23,9 +23,9 @@ end
 
 # https://rosalind.info/problems/prot/
 
-defmodule Converter do
+defmodule NewConverter do
   def get_codon_table() do
-    {_, table} = File.read("./constants/DNA_codon_table.txt")
+    {_, table} = File.read("./lib/constants/DNA_codon_table.txt")
 
     table
     |> String.split("\n", trim: true)
@@ -114,7 +114,7 @@ defmodule Converter do
   end
 end
 
-defmodule Solution do
+defmodule OpenReadingFrames do
   def parse_identifier_strand(single_line) do
     split = String.split(single_line, "\n")
     {Enum.at(split, 0), Enum.join(Enum.slice(split, 1..Enum.count(split)))}
@@ -127,7 +127,7 @@ defmodule Solution do
   end
 
   def get_codon_table() do
-    {_, table} = File.read("./constants/DNA_codon_table.txt")
+    {_, table} = File.read("./lib/constants/DNA_codon_table.txt")
 
     table
     |> String.split("\n", trim: true)
@@ -138,15 +138,15 @@ defmodule Solution do
   end
 
   def construct_frames(strand) do
-    {_, l3} = Converter.run(strand)
-    {_, l2} = Converter.run(String.slice(strand, 1..String.length(strand)))
-    {_, l1} = Converter.run(String.slice(strand, 2..String.length(strand)))
+    {_, l3} = NewConverter.run(strand)
+    {_, l2} = NewConverter.run(String.slice(strand, 1..String.length(strand)))
+    {_, l1} = NewConverter.run(String.slice(strand, 2..String.length(strand)))
     l1 ++ l2 ++ l3
   end
 
   def read_open_frame({_, strand}) do
     l1 = construct_frames(strand)
-    inverse_strand = Inverter.run(strand)
+    inverse_strand = NewInverter.run(strand)
     l2 = construct_frames(inverse_strand)
     l1 ++ l2
   end
@@ -161,11 +161,11 @@ defmodule Solution do
   end
 end
 
-{_, file} = File.read("./inputs/11_Open_Reading_Frames.txt")
+{_, file} = File.read("./lib/inputs/11_Open_Reading_Frames.txt")
 
-IO.inspect(Solution.run(file))
+IO.inspect(OpenReadingFrames.run(file))
 
-Enum.each(Solution.run(file), fn x ->
+Enum.each(OpenReadingFrames.run(file), fn x ->
   IO.puts(x)
   IO.puts("-------------")
 end)

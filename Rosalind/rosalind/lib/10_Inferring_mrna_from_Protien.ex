@@ -1,6 +1,6 @@
 # https://rosalind.info/problems/mrna/
 
-defmodule Solution do
+defmodule MRNAFromProtein do
   def add_codon_count(x, acc) do
     protein = Enum.at(x, -1)
     # codon = Enum.at(x, 0)
@@ -15,7 +15,7 @@ defmodule Solution do
   end
 
   def get_codon_counts() do
-    {_, table} = File.read("./constants/RNA_codon_table.txt")
+    {_, table} = File.read("./lib/constants/RNA_codon_table.txt")
 
     table
     |> String.split("\n", trim: true)
@@ -43,5 +43,5 @@ defmodule Solution do
 end
 
 # {_, file} = File.read("./inputs/10_Inferring_mrna_from_Protein.txt")
-{_, file} = File.read("./inputs/10_Inferring_mrna_from_Protien.txt")
-IO.inspect(Solution.run(file))
+{_, file} = File.read("./lib/inputs/10_Inferring_mrna_from_Protien.txt")
+IO.inspect(MRNAFromProtein.run(file))

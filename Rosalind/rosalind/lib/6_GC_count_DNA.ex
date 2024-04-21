@@ -1,6 +1,6 @@
 # https://rosalind.info/problems/gc/
 
-defmodule Solution do
+defmodule GCCount do
   def dna_splitter(input_line) do
     split = String.split(input_line, "\n")
     {Enum.at(split, 0), Enum.join(Enum.slice(split, 1..Enum.count(split)))}
@@ -37,5 +37,5 @@ defmodule Solution do
   end
 end
 
-{_, file} = File.read("./inputs/6_GC_count.txt")
-Solution.run(file)
+{_, file} = File.read("./lib/inputs/6_GC_count.txt")
+GCCount.run(file)

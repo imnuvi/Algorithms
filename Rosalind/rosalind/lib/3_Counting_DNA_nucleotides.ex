@@ -1,4 +1,4 @@
-defmodule Solution do
+defmodule Inverter do
   def get_base_pairs() do
     %{"A" => "T", "T" => "A", "G" => "C", "C" => "G"}
   end
@@ -15,5 +15,5 @@ defmodule Solution do
   end
 end
 
-{_, file} = File.read("./inputs/3_ComplementaryStrand.txt")
-IO.inspect(Solution.run(file))
+{_, file} = File.read("./lib/inputs/3_ComplementaryStrand.txt")
+IO.inspect(Inverter.run(file))

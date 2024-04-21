@@ -1,6 +1,6 @@
 # https://rosalind.info/problems/hamm/
 
-defmodule Solution do
+defmodule PointMutations do
   def collate_differences(index, %{"stranda" => stranda, "strandb" => strandb, "res" => res}) do
     cond do
       String.at(stranda, index) == String.at(strandb, index) ->
@@ -24,5 +24,5 @@ defmodule Solution do
   end
 end
 
-{_, file} = File.read("./inputs/7_point_mutations.txt")
-IO.inspect(Solution.run(file))
+{_, file} = File.read("./lib/inputs/7_point_mutations.txt")
+IO.inspect(PointMutations.run(file))

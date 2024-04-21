@@ -1,8 +1,8 @@
 # https://rosalind.info/problems/prot/
 
-defmodule Solution do
+defmodule RNAToProtein do
   def get_codon_table() do
-    {_, table} = File.read("./constants/RNA_codon_table.txt")
+    {_, table} = File.read("./lib/constants/RNA_codon_table.txt")
 
     table
     |> String.split("\n", trim: true)
@@ -33,5 +33,5 @@ defmodule Solution do
   end
 end
 
-{_, file} = File.read("./inputs/8_Translating_RNA_into_Protien.txt")
-IO.puts(Solution.run(file))
+{_, file} = File.read("./lib/inputs/8_Translating_RNA_into_Protien.txt")
+IO.puts(RNAToProtein.run(file))

@@ -1,6 +1,6 @@
 # https://rosalind.info/problems/fib/
 
-defmodule Solution do
+defmodule RabbitsAndRecurrance do
   def extend_list(init, mult) do
     init ++ [Enum.at(init, Enum.count(init) - 1) + Enum.at(init, Enum.count(init) - 2) * mult]
   end
@@ -26,5 +26,5 @@ defmodule Solution do
   end
 end
 
-{_, file} = File.read("./inputs/4_Rabbits_And_Recurrance.txt")
-IO.inspect(Solution.run(file))
+{_, file} = File.read("./lib/inputs/4_Rabbits_And_Recurrance.txt")
+IO.inspect(RabbitsAndRecurrance.run(file))
