@@ -5,61 +5,6 @@
 import Bitwise
 
 defmodule MendelsFirstLaw do
-  # def generate_combinations(n, lss, 0) do
-
-  # end
-  # def generate_combinations(n, [], depth) do
-  #   [n]
-  # end
-
-  def flatten_value(tail) when is_list(tail) do
-    tail
-  end
-
-  def flatten_value(tail) do
-    [tail]
-  end
-
-  def generate_combinations(val, lss, 1) do
-    lss |> Enum.map(fn x -> flatten_value(x) end)
-  end
-
-  def generate_combinations(val, lss, depth) when depth-1 == 1 do
-    # [n] ++ generate_combinations(lss[0] , Enum.slice(lss, 1..-1))
-    # [[n, Enum.at(lss, 0)]] ++ generate_combinations(n, Enum.slice(lss, 1..-1//1))
-    # fnum = Enum.at(lss, 0)
-    # nlist = Enum.slice(lss, 1..-1//1)
-    next_gens = generate_combinations(Enum.at(lss, 0), lss, depth-1)
-    IO.inspect(next_gens)
-    Enum.map(next_gens, fn x -> [val] ++ flatten_value(x) end)
-    |> Enum.map(fn x -> x end)
-  end
-
-  def generate_combinations(val, lss, depth) do
-    # [n] ++ generate_combinations(lss[0] , Enum.slice(lss, 1..-1))
-    # [[n, Enum.at(lss, 0)]] ++ generate_combinations(n, Enum.slice(lss, 1..-1//1))
-    # fnum = Enum.at(lss, 0)
-    # nlist = Enum.slice(lss, 1..-1//1)
-    next_gens = generate_combinations(Enum.at(lss, 0), Enum.slice(lss, 1..-1//1), depth-1)
-    IO.inspect(next_gens)
-    Enum.map(next_gens, fn x -> [val] ++ flatten_value(x) end)
-    |> Enum.map(fn x -> x end)
-  end
-
-  def generate_combinations_with_dupe(lss, depth) do
-    # [n] ++ generate_combinations(lss[0] , Enum.slice(lss, 1..-1))
-    # [[n, Enum.at(lss, 0)]] ++ generate_combinations(n, Enum.slice(lss, 1..-1//1))
-    fnum = Enum.at(lss, 0)
-    Enum.map(lss, fn x -> [fnum] ++ flatten_value(x) end)
-  end
-
-
-  # bad combinations function. rewriting it
-
-  def gen_combinations([]) do
-    []
-  end
-
   def combinations(0, _), do: [[]]
   def combinations(_, []), do: []
   def combinations(size, [head | tail]) do
@@ -82,11 +27,6 @@ defmodule MendelsFirstLaw do
     %{1 => [1, 1], 2 => [1, 0], 3=> [0,0]}
   end
 
-  def generate_dominance() do
-    # generates a map that has the dominance probability distribution
-
-  end
-
   def combine_single_gene(gene, org_genes) do
     org_genes |> Enum.map(fn x -> gene ||| x  end)
   end
@@ -105,17 +45,6 @@ defmodule MendelsFirstLaw do
   def elem_taker(list, index) do
     # takes a single element from a list and reduces its value by one.
     # zero indexed
-    # {Enum.at(list, index), Enum.slice(list, 0..index), Enum.slice(list, index..-1//1)}
-    # IO.puts("-------------")
-    # IO.inspect(list)
-    # IO.inspect(index)
-    # IO.inspect(Enum.at(list, index))
-    # IO.inspect([Enum.at(list,index) - 1])
-    # IO.inspect(Enum.slice(list, 0..index))
-    # IO.inspect(Enum.slice(list, index+1..-1//1))
-
-    # {[Enum.at(list, index)], Enum.slice(list, 0..index-1) ++ [Enum.at(list,index) - 1] ++ Enum.slice(list, index+1..-1//1)}
-
     case index do
       0 ->
         {[Enum.at(list, index)], [Enum.at(list,index) - 1] ++ Enum.slice(list, index+1..-1//1)}
@@ -125,12 +54,7 @@ defmodule MendelsFirstLaw do
   end
 
   def merge_taken_elements(x, acc) do
-      # IO.inspect(x)
-      # IO.inspect(x-1)
-      # IO.inspect(elem(acc,1))
-      # IO.inspect(Enum.at(elem(acc,1), -1))
       {takes, ncc} = elem_taker(Enum.at(elem(acc,1), -1), x-1)
-      # IO.inspect({elem(acc, 0) ++ takes, elem(acc,1) ++ [ncc]})
       {elem(acc, 0) ++ takes, elem(acc,1) ++ [ncc]}
   end
 
@@ -138,24 +62,14 @@ defmodule MendelsFirstLaw do
   def mendel_helper(match, counts) do
     # here counts is the options for parent
     allele_matrix = generate_allele_matrix()
-    # total_count = Enum.reduce(counts, 0, fn x, acc -> x + acc end)
-    # ncounts = counts
-    # 0..Enum.count(ncounts) |> Enum.reduce({ncounts}fn x -> element_taker(x, ncounts) end
-    # IO.puts("----------")
-    # IO.inspect(ncounts)
-    # IO.inspect(match)
-    # IO.inspect(allele_matrix)
-    # IO.inspect(total_count)
-
+    # simulating selection without replacing
     count_makes = match |> Enum.reduce({[], [counts]}, &merge_taken_elements/2)
+    # getting the allele table for each organism
     match_alleles = match |> Enum.map(fn x -> Map.get(allele_matrix, x) end)
-    # IO.inspect(count_makes)
-    # IO.inspect(match_alleles)
+    # calculating the partial probabilites by getting the options with total options and multiplying them.
     partial_probabilities = 0..Enum.count(match)-1
-    # |> Enum.map(fn x -> x end)
     |> Enum.map(fn
       x->
-        # IO.inspect(Enum.at(elem(count_makes,0), x))
         Enum.at(elem(count_makes,0), x)/Enum.reduce(
 
           Enum.at(elem(count_makes, 1), x), fn
@@ -166,15 +80,9 @@ defmodule MendelsFirstLaw do
     )
     |> Enum.reduce(1, fn x, acc -> x * acc end)
 
+    # this calculates the expected dominance of the distribution
     dominance_dist = allele_combinations(Enum.at(match_alleles, 0), Enum.at(match_alleles, 1))
-
-    # IO.inspect(dominance_dist)
-    # IO.inspect(partial_probabilities)
     partial_probabilities * dominance_dist
-    # Map.get(match)
-    # IO.puts("----------")
-
-
   end
 
 
@@ -194,18 +102,9 @@ defmodule MendelsFirstLaw do
       Enum.map(fn x -> mendel_helper(x, counts) end) |>
       Enum.reduce(0, fn x, acc -> acc + x end) |>
       Float.round(precision)
-      # Enum.each(fn x -> IO.inspect(x) end)
-    # allele_matrix
-    #   |> Enum.map(
-    #       fn x ->
-    #         {n, mat} = x
-    #       end
-    #     )
   end
 end
 
-# {_, file} = File.read("./lib/inputs/13_a_Calculating_expected_offspring.txt")
 {_, file} = File.read("./inputs/13_a_Calculating_expected_offspring.txt")
 
 IO.inspect(MendelsFirstLaw.run(file))
-# IO.inspect(MendelsFirstLaw.elem_taker([0,1,2,3,4,5], 5))
