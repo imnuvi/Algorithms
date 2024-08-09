@@ -138,10 +138,10 @@ defmodule MendelsFirstLaw do
   def mendel_helper(match, counts) do
     # here counts is the options for parent
     allele_matrix = generate_allele_matrix()
-    total_count = Enum.reduce(counts, 0, fn x, acc -> x + acc end)
-    ncounts = counts
+    # total_count = Enum.reduce(counts, 0, fn x, acc -> x + acc end)
+    # ncounts = counts
     # 0..Enum.count(ncounts) |> Enum.reduce({ncounts}fn x -> element_taker(x, ncounts) end
-    IO.puts("----------")
+    # IO.puts("----------")
     # IO.inspect(ncounts)
     # IO.inspect(match)
     # IO.inspect(allele_matrix)
@@ -149,8 +149,8 @@ defmodule MendelsFirstLaw do
 
     count_makes = match |> Enum.reduce({[], [counts]}, &merge_taken_elements/2)
     match_alleles = match |> Enum.map(fn x -> Map.get(allele_matrix, x) end)
-    IO.inspect(count_makes)
-    IO.inspect(match_alleles)
+    # IO.inspect(count_makes)
+    # IO.inspect(match_alleles)
     partial_probabilities = 0..Enum.count(match)-1
     # |> Enum.map(fn x -> x end)
     |> Enum.map(fn
@@ -168,8 +168,8 @@ defmodule MendelsFirstLaw do
 
     dominance_dist = allele_combinations(Enum.at(match_alleles, 0), Enum.at(match_alleles, 1))
 
-    IO.inspect(dominance_dist)
-    IO.inspect(partial_probabilities)
+    # IO.inspect(dominance_dist)
+    # IO.inspect(partial_probabilities)
     partial_probabilities * dominance_dist
     # Map.get(match)
     # IO.puts("----------")
