@@ -30,33 +30,20 @@ defmodule OverlappingGraph do
 
   def main_filter_runner(processed_list, x) do
       {name, _ ,tail} = Enum.at(processed_list, x)
-      sample = List.delete_at(processed_list, x)
+      List.delete_at(processed_list, x)
       |> Enum.filter(fn x ->  filter_search_element(x, tail) end)
       |> Enum.map(fn {mat_name, _, _} -> {name, mat_name} end)
   end
 
   def iterate_processed_list(processed_list) do
-    finlist = []
     count = Enum.count(processed_list)
-    sole = 0..count-1 |> Enum.map(fn x -> main_filter_runner(processed_list, x) end) |> Enum.reduce([], fn x, acc -> acc ++ x end)
-
-    # for x <- 0..count-1 do
-    #   {name, _ ,tail} = Enum.at(processed_list, x)
-    #   sample = List.delete_at(processed_list, x)
-    #   |> Enum.filter(fn x ->  filter_search_element(x, tail) end)
-    #   |> Enum.map(fn {mat_name, _, _} -> {name, mat_name} end)
-    #   finlist ++ sample
-    # end
+    0..count-1 |> Enum.map(fn x -> main_filter_runner(processed_list, x) end) |> Enum.reduce([], fn x, acc -> acc ++ x end)
   end
 
 
   def run(file) do
     lss =
       parse_fasta_file(file)
-
-    # This is how much overlap is expected
-    # IO.inspect(lss)
-    crop_length = get_crop_length()
 
     full_processed_list = lss
     |> Enum.map(&split_string_ends/1)
@@ -67,19 +54,6 @@ defmodule OverlappingGraph do
         IO.puts(x <> " " <> y)
       end
     )
-
-    processed_list = lss
-    |> Enum.map(fn x -> String.slice(elem(x,1), 0..crop_length-1) end)
-    # |>
-
-    # IO.inspect(processed_list)
-
-    processed_end_list = lss
-    |> Enum.map(fn x -> String.slice(elem(x,1), String.length(elem(x,1))-3..String.length(elem(x,1)) ) end)
-    # b = String.trim(a, "s")
-    # IO.inspect(processed_end_list)
-
-
   end
 end
 
