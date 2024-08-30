@@ -42,4 +42,13 @@ defmodule Permutate do
   end
 end
 
-Permutate.run(6)
+defmodule EnumerateGeneOrders do
+  def run(file) do
+    {count, _} = Integer.parse(file)
+    Permutate.run(count)
+  end
+end
+
+
+{_, file} = File.read("./lib/inputs/12_Enumerating_Gene_orders.txt")
+EnumerateGeneOrders.run(file)
