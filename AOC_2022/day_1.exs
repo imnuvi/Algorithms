@@ -1,3 +1,6 @@
+# https://adventofcode.com/2022/day/1
+
+
 defmodule Solution do
   def run(file, part) do
     {_, res} = File.read(file)
