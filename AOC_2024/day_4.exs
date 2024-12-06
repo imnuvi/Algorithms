@@ -26,7 +26,7 @@ defmodule Solution do
 
   def calculate_x_mas_indices(posx, posy) do
     template_x_mas = [{0,0},{1,1},{-1,-1},{1,-1},{-1,1}]
-    Enum.map(llist, fn {x, y} ->
+    Enum.map(template_x_mas, fn {x, y} ->
       nposx = posx - x
       nposy = posy - y
       cond do
@@ -36,7 +36,8 @@ defmodule Solution do
           {nposx, nposy}
       end
     end
-    ) |> Enum.filter(fn x -> x != nil end)
+    )
+    # |> Enum.filter(fn x -> x != nil end)
   end
 
   def calculate_window_indices(posx, posy) do
@@ -108,6 +109,32 @@ defmodule Solution do
       # |> Enum.map(fn x -> Enum.map(x, fn y -> calculate_window_indices(x,y) end) end)
   end
 
+  def process_2d_xmas_list(res) do
+    # IO.inspect(search_window_index_list(res,[{1, 0}, {2, 1}, {3, 2}, {4, 3}]))
+    # IO.inspect(search_window_index_list(res, [{1, 18}, {2, 19}, {3, 20}, {4, 21}]))
+    index_list = res
+      |> Enum.map(fn x -> Enum.map(Enum.filter(Enum.with_index(x), fn {x, _} -> x=="A" end), fn {_, pos} -> pos end) end)
+      |> Stream.with_index()
+      |> Enum.map(fn {x, index} -> Enum.map(x, fn y -> calculate_x_mas_indices(index, y) end) end)
+      |> Enum.reduce([], fn x, acc -> acc ++ x end )
+      |> Enum.filter(fn x -> Enum.all?(x, fn y -> y != nil end) end)
+      |> Enum.map(fn x -> search_window_index_list(res, x) end)
+      |> Enum.filter(fn x ->
+        cond do
+          ((String.at(x, 1) == String.at(x, 2)) or (String.at(x, 3) == String.at(x, 4))) ->
+            false
+          (Enum.sort(String.split(x, "", trim: true )) == ["A", "M", "M", "S", "S"]) ->
+            true
+          true ->
+            false
+        end
+      end)
+      |> Enum.count()
+
+      # |> Enum.map(fn x -> Enum.map(x, fn y -> Enum.map(y, fn z -> z end)) end)
+      # |> Enum.map(fn x -> Enum.map(x, fn y -> calculate_window_indices(x,y) end) end)
+  end
+
   def run(file, part) do
         {_, res} = File.read(file)
 
@@ -124,11 +151,12 @@ defmodule Solution do
               |> process_2d_list()
               # |> get_window(3, 200, 3, 600)
           :two ->
-            :pass
+            processed
+              |> process_2d_xmas_list()
           end
       end
 end
 
 IO.inspect(Solution.run("./inputs/day_4.txt", :one))
 # Solution.run("./inputs/day_41.txt", :one)
-# IO.inspect(Solution.run("./inputs/day_4.txt", :two))
+IO.inspect(Solution.run("./inputs/day_4.txt", :two))
